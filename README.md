@@ -28,3 +28,4 @@ cmake -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5 ..
 make -j12
 ```
 
+<img width="600px" src="/first.jpg"/>
