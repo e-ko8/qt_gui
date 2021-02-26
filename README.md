@@ -10,11 +10,6 @@ MacOS X:
 brew install git cmake qt5
 ```
 
-## Getting the code
-
-```
-
-```
 
 ## Building
 
