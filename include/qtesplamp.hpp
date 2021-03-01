@@ -6,6 +6,7 @@
 #include "color_wheel.hpp"
 
 #include <QWidget>
+#include <QTcpSocket>
 
 class QAbstractButton;
 
@@ -17,12 +18,6 @@ class QCP_EXPORT QEspLamp : public QWidget
     Q_PROPERTY(color_widgets::ColorWheel::ShapeEnum wheelShape READ wheelShape WRITE setWheelShape NOTIFY wheelShapeChanged)
     Q_PROPERTY(color_widgets::ColorWheel::ColorSpaceEnum colorSpace READ colorSpace WRITE setColorSpace NOTIFY colorSpaceChanged)
     Q_PROPERTY(bool wheelRotating READ wheelRotating WRITE setWheelRotating NOTIFY wheelRotatingChanged)
-    /**
-     * \brief whether the color alpha channel can be edited.
-     *
-     * If alpha is disabled, the selected color's alpha will always be 255.
-     */
-    Q_PROPERTY(bool alphaEnabled READ alphaEnabled WRITE setAlphaEnabled NOTIFY alphaEnabledChanged)
 
 public:
     enum ButtonMode {
@@ -49,8 +44,6 @@ public:
      * Get the color preview diplay mode
      */
     color_widgets::ColorPreview::DisplayMode previewDisplayMode() const;
-
-    bool alphaEnabled() const;
 
     /**
      * Select which dialog buttons to show
@@ -85,12 +78,6 @@ public Q_SLOTS:
     void setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum space);
     void setWheelRotating(bool rotating);
 
-    /**
-     * Set whether the color alpha channel can be edited.
-     * If alpha is disabled, the selected color's alpha will always be 255.
-     */
-    void setAlphaEnabled(bool a);
-
 Q_SIGNALS:
     /**
      * The current color was changed
@@ -106,8 +93,6 @@ Q_SIGNALS:
     void colorSpaceChanged(color_widgets::ColorWheel::ColorSpaceEnum space);
     void wheelRotatingChanged(bool rotating);
 
-    void alphaEnabledChanged(bool alphaEnabled);
-
 private Q_SLOTS:
     /// Update all the Ui elements to match the selected color
     void setColorInternal(const QColor &color);
@@ -115,14 +100,10 @@ private Q_SLOTS:
     void set_hsv();
     /// Update from RGB sliders
     void set_rgb();
-    /// Update from Alpha slider
-    void set_alpha();
 
     void on_edit_hex_colorChanged(const QColor& color);
     void on_edit_hex_colorEditingFinished(const QColor& color);
-#if 0
-    void on_buttonBox_clicked(QAbstractButton*);
-#endif
+    void on_submitClicked();
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
@@ -133,6 +114,7 @@ protected:
 private:
     class Private;
     Private * const p;
+    QTcpSocket *tcpSocket = nullptr;
 };
 
 #endif // QESPLAMP_HPP

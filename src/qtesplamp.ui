@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>491</width>
-    <height>380</height>
+    <height>433</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,16 +15,83 @@
   </property>
   <property name="windowIcon">
    <iconset theme="format-fill-color">
-    <normaloff/>
-   </iconset>
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Device:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QComboBox" name="modeComboBox">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <item>
+          <property name="text">
+           <string>SOLID_RARE</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>FADE_ANIM</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="hostLineEdit">
+         <property name="text">
+          <string>192.168.1.3</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>Submit</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QSpinBox" name="portSpinBox">
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+         <property name="value">
+          <number>8888</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="color_widgets::ColorWheel" name="wheel">
+        <widget class="color_widgets::ColorWheel" name="wheel" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
@@ -34,16 +101,15 @@
         </widget>
        </item>
        <item>
-        <widget class="color_widgets::ColorPreview" name="preview">
-         <property name="display_mode" stdset="0">
-          <enum>color_widgets::ColorPreview::SplitColor</enum>
-         </property>
-        </widget>
+        <widget class="color_widgets::ColorPreview" name="preview" native="true"/>
        </item>
       </layout>
      </item>
      <item>
       <layout class="QGridLayout" name="gridLayout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetMaximumSize</enum>
+       </property>
        <item row="2" column="1">
         <widget class="color_widgets::GradientSlider" name="slide_value">
          <property name="maximum">
@@ -92,16 +158,6 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="1">
-        <widget class="color_widgets::GradientSlider" name="slide_alpha">
-         <property name="maximum">
-          <number>255</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="1">
         <widget class="color_widgets::GradientSlider" name="slide_red">
          <property name="maximum">
@@ -133,13 +189,6 @@
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Green</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_alpha">
-         <property name="text">
-          <string>Alpha</string>
          </property>
         </widget>
        </item>
@@ -205,20 +254,6 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="2">
-        <widget class="QSpinBox" name="spin_alpha">
-         <property name="maximum">
-          <number>255</number>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="3">
-        <widget class="Line" name="line_alpha">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="0" colspan="3">
         <widget class="Line" name="line">
          <property name="orientation">
@@ -235,6 +270,12 @@
        </item>
        <item row="0" column="1">
         <widget class="color_widgets::HueSlider" name="slide_hue">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimum">
           <number>0</number>
          </property>
@@ -250,7 +291,7 @@
            <family>Monospace</family>
           </font>
          </property>
-         <property name="showAlpha">
+         <property name="showAlpha" stdset="0">
           <bool>true</bool>
          </property>
         </widget>
@@ -259,13 +300,6 @@
      </item>
     </layout>
    </item>
-   <!--item>
-    <widget class="QMainWindowButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QMainWindowButtonBox::Apply|QMainWindowButtonBox::Cancel|QMainWindowButtonBox::Ok|QMainWindowButtonBox::Reset</set>
-     </property>
-    </widget>
-   </item-->
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
@@ -381,22 +415,6 @@
     <hint type="destinationlabel">
      <x>537</x>
      <y>205</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>slide_alpha</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>QEspLamp</receiver>
-   <slot>set_alpha()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>416</x>
-     <y>279</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>531</x>
-     <y>251</y>
     </hint>
    </hints>
   </connection>
@@ -545,38 +563,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>slide_alpha</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spin_alpha</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>416</x>
-     <y>279</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>482</x>
-     <y>285</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spin_alpha</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>slide_alpha</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>482</x>
-     <y>285</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>416</x>
-     <y>279</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>slide_blue</sender>
    <signal>valueChanged(int)</signal>
    <receiver>spin_blue</receiver>
@@ -657,34 +643,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
    <receiver>QEspLamp</receiver>
-   <slot>accept()</slot>
+   <slot>on_submitClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>250</x>
-     <y>373</y>
+     <x>435</x>
+     <y>31</y>
     </hint>
     <hint type="destinationlabel">
-     <x>430</x>
-     <y>267</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>QEspLamp</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>183</x>
-     <y>373</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>294</x>
-     <y>323</y>
+     <x>245</x>
+     <y>216</y>
     </hint>
    </hints>
   </connection>
@@ -695,6 +665,5 @@
   <slot>set_hsv()</slot>
   <slot>setColor(QColor)</slot>
   <slot>setColorInternal(QColor)</slot>
-  <slot>set_alpha()</slot>
  </slots>
 </ui>

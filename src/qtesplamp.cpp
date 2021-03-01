@@ -44,16 +44,15 @@ public:
     Ui_QEspLamp ui;
     ButtonMode button_mode;
     bool pick_from_screen;
-    bool alpha_enabled;
     QColor color;
 
-    Private() : pick_from_screen(false), alpha_enabled(true)
+    Private() : pick_from_screen(false)
     {}
 
 };
 
 QEspLamp::QEspLamp(QWidget *parent) :
-    QWidget(parent), p(new Private)
+    QWidget(parent), p(new Private), tcpSocket(new QTcpSocket(this))
 {
     p->ui.setupUi(this);
 
@@ -83,8 +82,6 @@ QSize QEspLamp::sizeHint() const
 QColor QEspLamp::color() const
 {
     QColor col = p->color;
-    if ( !p->alpha_enabled )
-        col.setAlpha(255);
     return col;
 }
 
@@ -109,27 +106,6 @@ void QEspLamp::setPreviewDisplayMode(ColorPreview::DisplayMode mode)
 ColorPreview::DisplayMode QEspLamp::previewDisplayMode() const
 {
     return p->ui.preview->displayMode();
-}
-
-void QEspLamp::setAlphaEnabled(bool a)
-{
-    if ( a != p->alpha_enabled )
-    {
-        p->alpha_enabled = a;
-
-        p->ui.edit_hex->setShowAlpha(a);
-        p->ui.line_alpha->setVisible(a);
-        p->ui.label_alpha->setVisible(a);
-        p->ui.slide_alpha->setVisible(a);
-        p->ui.spin_alpha->setVisible(a);
-
-        Q_EMIT alphaEnabledChanged(a);
-    }
-}
-
-bool QEspLamp::alphaEnabled() const
-{
-    return p->alpha_enabled;
 }
 
 void QEspLamp::setButtonMode(ButtonMode mode)
@@ -199,14 +175,6 @@ void QEspLamp::setColorInternal(const QColor &col)
     p->ui.slide_value->setLastColor(QColor::fromHsvF(p->ui.wheel->hue(), p->ui.wheel->saturation(),1));
 
 
-    QColor apha_color = col;
-    apha_color.setAlpha(0);
-    p->ui.slide_alpha->setFirstColor(apha_color);
-    apha_color.setAlpha(255);
-    p->ui.slide_alpha->setLastColor(apha_color);
-    p->ui.spin_alpha->setValue(col.alpha());
-    p->ui.slide_alpha->setValue(col.alpha());
-
     if ( !p->ui.edit_hex->isModified() )
         p->ui.edit_hex->setColor(col);
 
@@ -226,20 +194,9 @@ void QEspLamp::set_hsv()
         QColor col = QColor::fromHsv(
             p->ui.slide_hue->value(),
             p->ui.slide_saturation->value(),
-            p->ui.slide_value->value(),
-            p->ui.slide_alpha->value()
+            p->ui.slide_value->value()
         );
         p->ui.wheel->setColor(col);
-        setColorInternal(col);
-    }
-}
-
-void QEspLamp::set_alpha()
-{
-    if ( !signalsBlocked() )
-    {
-        QColor col = p->color;
-        col.setAlpha(p->ui.slide_alpha->value());
         setColorInternal(col);
     }
 }
@@ -251,8 +208,7 @@ void QEspLamp::set_rgb()
         QColor col(
                 p->ui.slide_red->value(),
                 p->ui.slide_green->value(),
-                p->ui.slide_blue->value(),
-                p->ui.slide_alpha->value()
+                p->ui.slide_blue->value()
             );
         if (col.saturation() == 0)
             col = QColor::fromHsv(p->ui.slide_hue->value(), 0, col.value());
@@ -270,6 +226,64 @@ void QEspLamp::on_edit_hex_colorEditingFinished(const QColor& color)
 {
     p->ui.edit_hex->setModified(false);
     setColorInternal(color);
+}
+
+void QEspLamp::on_submitClicked()
+{
+    p->ui.pushButton->setEnabled(false);
+    tcpSocket->abort();
+    tcpSocket->connectToHost(p->ui.hostLineEdit->text(), p->ui.portSpinBox->value());
+    if (tcpSocket->waitForConnected())
+    {
+        if (tcpSocket->state() == QAbstractSocket::ConnectedState)
+        {
+            int r, g, b, a;
+            p->color.getRgb(&r, &g, &b, &a);
+
+            int mode = p->ui.modeComboBox->itemData(p->ui.modeComboBox->currentIndex()) == "SOLID_RARE" ? 1 : 12;
+           unsigned char data[] =
+	    {
+                (unsigned char)mode,
+		        0,
+                (unsigned char)r,
+                (unsigned char)g,
+                (unsigned char)b,
+	    };
+            tcpSocket->write(reinterpret_cast<char*>(data), sizeof(data));
+	    tcpSocket->waitForBytesWritten();
+	    printf("OK wrote [%d, %d, %d, %d]\n", data[0], data[1], data[2], data[3]);
+	    tcpSocket->close();
+	}
+    }
+    p->ui.pushButton->setEnabled(true);
+#if 0
+    let data = Buffer.from([Mode.SOLID_RARE, 0, 0, 0, 0]) //# все диоды не активны
+ //let data = Buffer.from([Mode.FADE_ANIM, 0, 0, 128, 0]) //# мерцание синим цветом
+//let data = Buffer.from([Mode.SOLID_RARE, 0, 20, 243, 70]) //# 20 70 243 - мятный - горит
+//let data = Buffer.from([Mode.SOLID_RARE, 0, 20, 114, 243]) //#1472f3 20 114 243
+// let data = Buffer.from([Mode.SOLID_RARE, 0, 255, 255, 255]) //full bright
+//let data = Buffer.from([Mode.SOLID_RARE, 10, 0, 25, 0])
+ //let data = Buffer.from([Mode.SOLID_RARE, 6, 0, 0, 0])
+//let data = Buffer.from([Mode.SOLID_RARE, 1, 255, 0])
+// let data = Buffer.from([Mode.FADE_ANIM, 15,34,70])
+ //let data = Buffer.concat([Buffer.from([Mode.TIME_CURSOR, 0, 0, 255]), Buffer.from('10 ', 'utf8')])
+// let data = Buffer.concat([
+//     Buffer.from([Mode.SECTION_SOLID, 0, 255, 0]),
+//     Buffer.from('0 5 ', 'utf8')
+// ])
+ //let data = Buffer.concat([
+ //    Buffer.from([Mode.SECTION_SOLID, 20, 243, 70]),
+ //    Buffer.from('10 20 ', 'utf8')
+// ])
+
+function send(data) {
+    client.connect({port: 8888, host: HOST}, function () {
+        console.log("TCP connection established with the server.")
+        client.write(data)
+    })
+}
+send(data)
+#endif
 }
 
 #if 0
