@@ -20,11 +20,6 @@ class QCP_EXPORT QEspLamp : public QWidget
     Q_PROPERTY(bool wheelRotating READ wheelRotating WRITE setWheelRotating NOTIFY wheelRotatingChanged)
 
 public:
-    enum ButtonMode {
-        OkCancel,
-        OkApplyCancel,
-        Close
-    };
 
     explicit QEspLamp(QWidget *parent = nullptr);
 
@@ -44,17 +39,6 @@ public:
      * Get the color preview diplay mode
      */
     color_widgets::ColorPreview::DisplayMode previewDisplayMode() const;
-
-    /**
-     * Select which dialog buttons to show
-     *
-     * There are three predefined modes:
-     * OkCancel - this is useful when the dialog is modal and we just want to return a color
-     * OkCancelApply - this is for non-modal dialogs
-     * Close - for non-modal dialogs with direct color updates via colorChanged signal
-     */
-    void setButtonMode(ButtonMode mode);
-    ButtonMode buttonMode() const;
 
     QSize sizeHint() const;
 
